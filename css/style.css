@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
+header {
+  outline: 1px solid red;
+}
+
+#leftSideBar {
+  outline: 1px solid green;
+  float: left;
+}
+
+#productImages img {
+  display: inline-block;
+  width: 300px;
+  height: 300px;
+  margin: 3em 2em 3em 2em;
+}
