@@ -17,3 +17,7 @@ header {
   height: 300px;
   margin: 3em 2em 3em 2em;
 }
+
+#productImages h3 {
+  display: inline-block;
+}
