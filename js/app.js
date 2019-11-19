@@ -37,11 +37,15 @@ function Product(name, imgUrl) {
   this.viewCount = 0;
 }
 
-// The list of products
+// list of all products
 Product.productList = [];
-// The amount of total votes cast by user
+// list for removing VIEWED products within 2 rounds of voting
+Product.workingProductList = [];
+// list for last three items display
+Product.lastThreeProductsDisplayedList = [];
+// amount of total votes cast by user
 Product.totalVoteCount = 0;
-// The maximum allowed votes
+// maximum allowed votes
 Product.maxVoteCount = 25;
 
 // html elements
@@ -56,6 +60,8 @@ Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
 Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
 // sidebar section element
 Product.sideBarProductCount = document.getElementById('leftSideBar');
+// canvas element
+Product.canvasElement = document.getElementById('canvas');
 
 // add event listeners to img elements
 Product.leftImage.addEventListener('click', clickHandler);
@@ -68,9 +74,26 @@ Product.addProduct = function (product) {
   Product.productList.push(product);
 };
 
-// function returns a random product from the ProductManager's productlist
+// function returns a random product from the ProductManager's productlist=
 Product.getRandomProduct = function () {
-  return Product.productList[Math.floor(Math.random() * Product.productList.length)];
+
+  // working product list gets copy of all products
+  // if working product list is zero or if product list is less than 4
+  // shuffles this array for voting uses
+  if (Product.workingProductList.length === 0 || Product.workingProductList.length < 4) {
+    Product.workingProductList = Product.productList.slice();
+    shuffleArray(Product.workingProductList);
+  }
+
+  // get last product from shuffled array
+  var randomProduct = Product.workingProductList.pop();
+
+  // if current randomProduct matches a product from lastThreeProductDisplay array, get next product
+  while (Product.lastThreeProductsDisplayedList.includes(randomProduct)) {
+    randomProduct = Product.workingProductList.pop();
+  }
+
+  return randomProduct;
 };
 
 // function gets random products for left,center,right img and h3 elements
@@ -80,12 +103,8 @@ Product.setRandomImages = function () {
   var randomLeftProduct = Product.getRandomProduct();
   var randomCenterProduct = Product.getRandomProduct();
   var randomRightProduct = Product.getRandomProduct();
-  while (randomLeftProduct === randomCenterProduct) {
-    randomCenterProduct = Product.getRandomProduct();
-  }
-  while (randomRightProduct === randomLeftProduct || randomRightProduct === randomCenterProduct) {
-    randomRightProduct = Product.getRandomProduct();
-  }
+  // populate array with currently selected products
+  Product.lastThreeProductsDisplayedList = [randomLeftProduct, randomCenterProduct, randomRightProduct];
 
   // set left product img url and alt text
   Product.leftImage.src = randomLeftProduct.imgUrl;
@@ -137,10 +156,80 @@ function clickHandler(event) {
     Product.centerImage.removeEventListener('click', clickHandler);
     Product.rightImage.removeEventListener('click', clickHandler);
     Product.setProductVoteData();
+    renderVoterDataOnCanvas();
   } else {
     Product.setRandomImages();
   }
 }
+
+// function takes an array and randomizes the element indexes from their original position
+function shuffleArray(arr) {
+
+  for (var i = arr.length - 1; i > 0; i--) {
+    // pick a random element index from 0 to i
+    var j = Math.floor((Math.random() * i));
+    // swap elements in array 
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+}
+
+function renderVoterDataOnCanvas() {
+
+  var productNameArray = [];
+  var productLikesArray = [];
+  var productViewsArray = [];
+
+  // array for product name label
+  for (var i = 0; i < Product.productList.length; i++) {
+    productNameArray.push(Product.productList[i].name);
+  }
+
+  // array for product vote data
+  for (var i = 0; i < Product.productList.length; i++) {
+    productLikesArray.push(Product.productList[i].clickCount);
+  }
+
+  // array for product view data
+  for (var i = 0; i < Product.productList.length; i++) {
+    productViewsArray.push(Product.productList[i].viewCount);
+  }
+
+  var ctx = Product.canvasElement.getContext('2d');
+  var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'bar',
+
+    // The data for our dataset
+    data: {
+      labels: productNameArray,
+      datasets: [{
+        label: 'Vote Count',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: productLikesArray
+      }, {
+        label: 'View Count',
+        backgroundColor: 'blue',
+        data: productViewsArray
+      }]
+    },
+
+    // Configuration options go here
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
+}
+
 
 // call main
 main();
