@@ -1,7 +1,7 @@
 'use strict';
 
 function main() {
-  // create product manager and add products
+  // create and add products
   Product.addProduct(new Product('bag', 'img/bag.jpg'));
   Product.addProduct(new Product('banana', 'img/banana.jpg'));
   Product.addProduct(new Product('bathroom', 'img/bathroom.jpg'));
@@ -22,9 +22,9 @@ function main() {
   Product.addProduct(new Product('usb', 'img/usb.gif'));
   Product.addProduct(new Product('water-can', 'img/water-can.jpg'));
   Product.addProduct(new Product('wine-glass', 'img/wine-glass.jpg'));
+
   // set initial images on page load
   Product.setRandomImages();
-
 }
 
 // Product represents an item in store
@@ -32,54 +32,93 @@ function Product(name, imgUrl) {
   // instance variables
   this.name = name;
   this.imgUrl = imgUrl;
+  // counters for click and views
   this.clickCount = 0;
   this.viewCount = 0;
 }
 
-// 
-Product.clickCount = 0;
-
-// The amount of total votes
+// The list of products
+Product.productList = [];
+// The amount of total votes cast by user
 Product.totalVoteCount = 0;
 // The maximum allowed votes
 Product.maxVoteCount = 25;
-
-Product.productList = [];
-
-Product.addProduct = function(product) {
-  Product.productList.push(product);
-}
 
 // set html img element variables
 Product.leftImage = document.getElementById('leftProduct');
 Product.centerImage = document.getElementById('centerProduct');
 Product.rightImage = document.getElementById('rightProduct');
+
+// set html h3 element variables
+Product.leftImageAltText = document.getElementById('leftProductAlt');
+Product.centerImageAltText = document.getElementById('centerProductAlt');
+Product.rightImageAltText = document.getElementById('rightProductAlt');
+
 // add event listeners to img elements
 Product.leftImage.addEventListener('click', clickHandler);
 Product.centerImage.addEventListener('click', clickHandler);
 Product.rightImage.addEventListener('click', clickHandler);
 
-
-// Function getRandomProductImage returns a random product from the ProductManager's productlist
-Product.getRandomProductImage = function () {
-  return Product.productList[Math.floor(Math.random() * Product.productList.length)].imgUrl;
+// function adds a product to list
+Product.addProduct = function (product) {
+  Product.productList.push(product);
 }
 
+// function getRandomProductImage returns a random product from the ProductManager's productlist
+Product.getRandomProduct = function () {
+  return Product.productList[Math.floor(Math.random() * Product.productList.length)];
+}
+
+// function gets random products for left,center,right img and h3 elements
+// sets src and alt attributes
+// increases view count
 Product.setRandomImages = function () {
-  Product.leftImage.src = Product.getRandomProductImage();
-  Product.centerImage.src = Product.getRandomProductImage();
-  Product.rightImage.src = Product.getRandomProductImage();
+  // left product
+  var randomLeftImage = Product.getRandomProduct();
+  Product.leftImage.src = randomLeftImage.imgUrl;
+  Product.leftImage.alt = randomLeftImage.name;
+  Product.leftImageAltText.textContent = Product.leftImage.alt;
+
+  // center product
+  var randomCenterImage = Product.getRandomProduct();
+  Product.centerImage.src = randomCenterImage.imgUrl;
+  Product.centerImage.alt = randomCenterImage.name;
+  Product.centerImageAltText.textContent = Product.centerImage.alt;
+
+  // right product
+  var randomRightImage = Product.getRandomProduct();
+  Product.rightImage.src = randomRightImage.imgUrl;
+  Product.rightImage.alt = randomRightImage.name;
+  Product.rightImageAltText.textContent = Product.rightImage.alt;
+
+  // increase view count for selected products
+  randomLeftImage.viewCount++;
+  randomRightImage.viewCount++;
+  randomCenterImage.viewCount++;
 }
 
-
+// function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
-  console.log(event.target.alt);
-  Product.setRandomImages();
+  // get alt text for selected image and find match of text in product list
+  var selectedImageAltText = event.target.alt;
+  for (var productIndex = 0; productIndex < Product.productList.length; productIndex++) {
+    if (selectedImageAltText === Product.productList[productIndex].name) {
+      Product.productList[productIndex].clickCount++;
+    }
+  }
+
+  // increase total vote count
+  Product.totalVoteCount++
+  // check if user has more votes to cast
+  // if no more counts, remove event listeners
+  if (Product.totalVoteCount === Product.maxVoteCount) {
+    Product.leftImage.removeEventListener('click', clickHandler);
+    Product.centerImage.removeEventListener('click', clickHandler);
+    Product.rightImage.removeEventListener('click', clickHandler);
+  } else {
+    Product.setRandomImages();
+  }
 }
-
-
-
-
 
 // call main
 main();
