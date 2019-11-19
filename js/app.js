@@ -44,17 +44,17 @@ Product.totalVoteCount = 0;
 // The maximum allowed votes
 Product.maxVoteCount = 25;
 
-// set html img element variables
+// html elements
+//
+// img element variables
 Product.leftImage = document.getElementById('leftProduct');
 Product.centerImage = document.getElementById('centerProduct');
 Product.rightImage = document.getElementById('rightProduct');
-
-// set html h3 element variables
-Product.leftImageAltText = document.getElementById('leftProductAlt');
-Product.centerImageAltText = document.getElementById('centerProductAlt');
-Product.rightImageAltText = document.getElementById('rightProductAlt');
-
-// set html sidebar section element
+// h3 element variables
+Product.leftImageH3Element = document.getElementById('leftProductH3tag');
+Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
+Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
+// sidebar section element
 Product.sideBarProductCount = document.getElementById('leftSideBar');
 
 // add event listeners to img elements
@@ -77,57 +77,56 @@ Product.getRandomProduct = function () {
 // sets src and alt attributes
 // increases view count
 Product.setRandomImages = function () {
-  // left product
-  var randomLeftImage = Product.getRandomProduct();
-  Product.leftImage.src = randomLeftImage.imgUrl;
-  Product.leftImage.alt = randomLeftImage.name;
-  Product.leftImageAltText.textContent = Product.leftImage.alt;
 
-  // center product
-  var randomCenterImage = Product.getRandomProduct();
-  Product.centerImage.src = randomCenterImage.imgUrl;
-  Product.centerImage.alt = randomCenterImage.name;
-  Product.centerImageAltText.textContent = Product.centerImage.alt;
+  // gets three distinct products
+  var randomLeftProduct = Product.getRandomProduct();
+  var randomCenterProduct = Product.getRandomProduct();
+  var randomRightProduct = Product.getRandomProduct();
+  while (randomLeftProduct === randomCenterProduct) {
+    randomCenterProduct = Product.getRandomProduct();
+  } 
+  while (randomRightProduct === randomLeftProduct || randomRightProduct === randomCenterProduct) {
+    var randomRightProduct = Product.getRandomProduct();
+  }
 
-  // right product
-  var randomRightImage = Product.getRandomProduct();
-  Product.rightImage.src = randomRightImage.imgUrl;
-  Product.rightImage.alt = randomRightImage.name;
-  Product.rightImageAltText.textContent = Product.rightImage.alt;
+  // set left product img url and alt text
+  Product.leftImage.src = randomLeftProduct.imgUrl;
+  Product.leftImage.alt = randomLeftProduct.name;
+  Product.leftImageH3Element.textContent = Product.leftImage.alt;
+  // set center product img url and alt text
+  Product.centerImage.src = randomCenterProduct.imgUrl;
+  Product.centerImage.alt = randomCenterProduct.name;
+  Product.centerImageH3Element.textContent = Product.centerImage.alt;
+  // set right product img url and alt text
+  Product.rightImage.src = randomRightProduct.imgUrl;
+  Product.rightImage.alt = randomRightProduct.name;
+  Product.rightImageH3Element.textContent = Product.rightImage.alt;
 
   // increase view count for selected products
-  randomLeftImage.viewCount++;
-  randomRightImage.viewCount++;
-  randomCenterImage.viewCount++;
+  randomLeftProduct.viewCount++;
+  randomRightProduct.viewCount++;
+  randomCenterProduct.viewCount++;
+}
+
+Product.setProductVoteData = function () {
+
 }
 
 // function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
 
-  // tracks node location in sidebar list
-  var spanElementNodeNumber;
   // get alt text for selected image and find match of text in product list
   var selectedImageAltText = event.target.alt;
   for (var productIndex = 0; productIndex < Product.productList.length; productIndex++) {
     if (selectedImageAltText === Product.productList[productIndex].name) {
       Product.productList[productIndex].clickCount++;
-      spanElementNodeNumber = productIndex + 1;
     }
   }
-
-  // TO DO
-  // increase side bar product vote count
-  
-
-
-  // reset spanElement to 0 for next click
-  spanElementNodeNumber = 0;
 
   // increase total vote count
   Product.totalVoteCount++
 
-  // check if user has more votes to cast
-  // if no more counts, remove event listeners
+  // remove listeners after user reaches maximum vote
   if (Product.totalVoteCount === Product.maxVoteCount) {
     Product.leftImage.removeEventListener('click', clickHandler);
     Product.centerImage.removeEventListener('click', clickHandler);
