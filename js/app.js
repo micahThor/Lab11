@@ -54,10 +54,14 @@ Product.leftImageAltText = document.getElementById('leftProductAlt');
 Product.centerImageAltText = document.getElementById('centerProductAlt');
 Product.rightImageAltText = document.getElementById('rightProductAlt');
 
+// set html sidebar section element
+Product.sideBarProductCount = document.getElementById('leftSideBar');
+
 // add event listeners to img elements
 Product.leftImage.addEventListener('click', clickHandler);
 Product.centerImage.addEventListener('click', clickHandler);
 Product.rightImage.addEventListener('click', clickHandler);
+
 
 // function adds a product to list
 Product.addProduct = function (product) {
@@ -99,16 +103,29 @@ Product.setRandomImages = function () {
 
 // function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
+
+  // tracks node location in sidebar list
+  var spanElementNodeNumber;
   // get alt text for selected image and find match of text in product list
   var selectedImageAltText = event.target.alt;
   for (var productIndex = 0; productIndex < Product.productList.length; productIndex++) {
     if (selectedImageAltText === Product.productList[productIndex].name) {
       Product.productList[productIndex].clickCount++;
+      spanElementNodeNumber = productIndex + 1;
     }
   }
 
+  // TO DO
+  // increase side bar product vote count
+  
+
+
+  // reset spanElement to 0 for next click
+  spanElementNodeNumber = 0;
+
   // increase total vote count
   Product.totalVoteCount++
+
   // check if user has more votes to cast
   // if no more counts, remove event listeners
   if (Product.totalVoteCount === Product.maxVoteCount) {
