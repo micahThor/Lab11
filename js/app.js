@@ -125,17 +125,6 @@ Product.setRandomImages = function () {
   randomCenterProduct.viewCount++;
 };
 
-// function displays vote data to sidebar
-Product.setProductVoteData = function () {
-
-  // get children list from sidebar
-  var childrenList = Product.sideBarProductCount.childNodes;
-  // iterate through children and add text content to p elements
-  for (var productIndex = 0; productIndex < Product.productList.length; productIndex++) {
-    childrenList[productIndex].textContent = `${Product.productList[productIndex].name} has ${Product.productList[productIndex].clickCount} votes and was shown ${Product.productList[productIndex].viewCount} times`;
-  }
-};
-
 // function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
 
@@ -155,7 +144,6 @@ function clickHandler(event) {
     Product.leftImage.removeEventListener('click', clickHandler);
     Product.centerImage.removeEventListener('click', clickHandler);
     Product.rightImage.removeEventListener('click', clickHandler);
-    Product.setProductVoteData();
     renderVoterDataOnCanvas();
   } else {
     Product.setRandomImages();
