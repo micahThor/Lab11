@@ -46,11 +46,11 @@ Product.maxVoteCount = 25;
 
 // html elements
 //
-// img element variables
+// img elements
 Product.leftImage = document.getElementById('leftProduct');
 Product.centerImage = document.getElementById('centerProduct');
 Product.rightImage = document.getElementById('rightProduct');
-// h3 element variables
+// h3 elements
 Product.leftImageH3Element = document.getElementById('leftProductH3tag');
 Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
 Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
@@ -66,16 +66,14 @@ Product.rightImage.addEventListener('click', clickHandler);
 // function adds a product to list
 Product.addProduct = function (product) {
   Product.productList.push(product);
-}
+};
 
-// function getRandomProductImage returns a random product from the ProductManager's productlist
+// function returns a random product from the ProductManager's productlist
 Product.getRandomProduct = function () {
   return Product.productList[Math.floor(Math.random() * Product.productList.length)];
-}
+};
 
 // function gets random products for left,center,right img and h3 elements
-// sets src and alt attributes
-// increases view count
 Product.setRandomImages = function () {
 
   // gets three distinct products
@@ -84,9 +82,9 @@ Product.setRandomImages = function () {
   var randomRightProduct = Product.getRandomProduct();
   while (randomLeftProduct === randomCenterProduct) {
     randomCenterProduct = Product.getRandomProduct();
-  } 
+  }
   while (randomRightProduct === randomLeftProduct || randomRightProduct === randomCenterProduct) {
-    var randomRightProduct = Product.getRandomProduct();
+    randomRightProduct = Product.getRandomProduct();
   }
 
   // set left product img url and alt text
@@ -106,11 +104,18 @@ Product.setRandomImages = function () {
   randomLeftProduct.viewCount++;
   randomRightProduct.viewCount++;
   randomCenterProduct.viewCount++;
-}
+};
 
+// function displays vote data to sidebar
 Product.setProductVoteData = function () {
 
-}
+  // get children list from sidebar
+  var childrenList = Product.sideBarProductCount.childNodes;
+  // iterate through children and add text content to p elements
+  for (var productIndex = 0; productIndex < Product.productList.length; productIndex++) {
+    childrenList[productIndex].textContent = `${Product.productList[productIndex].name} has ${Product.productList[productIndex].clickCount} votes and was shown ${Product.productList[productIndex].viewCount} times`;
+  }
+};
 
 // function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
@@ -124,13 +129,14 @@ function clickHandler(event) {
   }
 
   // increase total vote count
-  Product.totalVoteCount++
+  Product.totalVoteCount++;
 
-  // remove listeners after user reaches maximum vote
+  // remove listeners after user reaches maximum vote and display vote data
   if (Product.totalVoteCount === Product.maxVoteCount) {
     Product.leftImage.removeEventListener('click', clickHandler);
     Product.centerImage.removeEventListener('click', clickHandler);
     Product.rightImage.removeEventListener('click', clickHandler);
+    Product.setProductVoteData();
   } else {
     Product.setRandomImages();
   }
