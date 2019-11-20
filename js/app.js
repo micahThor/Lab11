@@ -165,21 +165,22 @@ function shuffleArray(arr) {
 
 function renderVoterDataOnCanvas() {
 
+  // aux arrays for pulling out Product object state
   var productNameArray = [];
   var productLikesArray = [];
   var productViewsArray = [];
 
-  // array for product name label
+  // for product name label
   for (var i = 0; i < Product.productList.length; i++) {
     productNameArray.push(Product.productList[i].name);
   }
 
-  // array for product vote data
+  // for product vote data
   for (var i = 0; i < Product.productList.length; i++) {
     productLikesArray.push(Product.productList[i].clickCount);
   }
 
-  // array for product view data
+  // for product view data
   for (var i = 0; i < Product.productList.length; i++) {
     productViewsArray.push(Product.productList[i].viewCount);
   }
@@ -188,7 +189,7 @@ function renderVoterDataOnCanvas() {
   var chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'bar',
-
+    
     // The data for our dataset
     data: {
       labels: productNameArray,
@@ -202,20 +203,8 @@ function renderVoterDataOnCanvas() {
         backgroundColor: 'blue',
         data: productViewsArray
       }]
-    },
-
-    // Configuration options go here
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
-      }
     }
   });
-
 }
 
 
