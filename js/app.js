@@ -176,12 +176,12 @@ function renderVoterDataOnCanvas() {
   }
 
   // for product vote data
-  for (var i = 0; i < Product.productList.length; i++) {
+  for (i = 0; i < Product.productList.length; i++) {
     productLikesArray.push(Product.productList[i].clickCount);
   }
 
   // for product view data
-  for (var i = 0; i < Product.productList.length; i++) {
+  for (i = 0; i < Product.productList.length; i++) {
     productViewsArray.push(Product.productList[i].viewCount);
   }
 
@@ -189,7 +189,6 @@ function renderVoterDataOnCanvas() {
   var chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'bar',
-    
     // The data for our dataset
     data: {
       labels: productNameArray,
