@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+body {
+  width: 80%;
+  margin: 0 auto;
+}
+
 header {
   outline: 1px solid red;
 }
@@ -11,11 +16,15 @@ header {
   float: left;
 }
 
+#productImages {
+  outline: 1px solid blue;
+  margin: 2em 0 2em 0;
+  text-align: center;
+}
+
 #productImages img {
-  display: inline-block;
-  width: 300px;
-  height: 300px;
-  margin: 3em 2em 3em 2em;
+  width: 200px;
+  height: 200px;
 }
 
 #productImages h3 {
