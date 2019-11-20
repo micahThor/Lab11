@@ -1,129 +1,56 @@
 'use strict';
 
+//////////////////////////////////////////////
+//    FUNCTION SECTION
+//////////////////////////////////////////////
+
+// function starts program
 function main() {
-  // create and add products
-  Product.addProduct(new Product('bag', 'img/bag.jpg'));
-  Product.addProduct(new Product('banana', 'img/banana.jpg'));
-  Product.addProduct(new Product('bathroom', 'img/bathroom.jpg'));
-  Product.addProduct(new Product('boots', 'img/boots.jpg'));
-  Product.addProduct(new Product('breakfast', 'img/breakfast.jpg'));
-  Product.addProduct(new Product('bubblegum', 'img/bubblegum.jpg'));
-  Product.addProduct(new Product('chair', 'img/chair.jpg'));
-  Product.addProduct(new Product('cthulhu', 'img/cthulhu.jpg'));
-  Product.addProduct(new Product('dog-duck', 'img/dog-duck.jpg'));
-  Product.addProduct(new Product('dragon', 'img/dragon.jpg'));
-  Product.addProduct(new Product('pen', 'img/pen.jpg'));
-  Product.addProduct(new Product('pet-sweep', 'img/pet-sweep.jpg'));
-  Product.addProduct(new Product('scissors', 'img/scissors.jpg'));
-  Product.addProduct(new Product('shark', 'img/shark.jpg'));
-  Product.addProduct(new Product('sweep', 'img/sweep.png'));
-  Product.addProduct(new Product('tauntaun', 'img/tauntaun.jpg'));
-  Product.addProduct(new Product('unicorn', 'img/unicorn.jpg'));
-  Product.addProduct(new Product('usb', 'img/usb.gif'));
-  Product.addProduct(new Product('water-can', 'img/water-can.jpg'));
-  Product.addProduct(new Product('wine-glass', 'img/wine-glass.jpg'));
 
-  // set initial images on page load
-  Product.setRandomImages();
-}
+  // check local storage for product data
+  if (localStorage.getItem('productData') !== null) {
 
-// Product represents an item in store
-function Product(name, imgUrl) {
-  // instance variables
-  this.name = name;
-  this.imgUrl = imgUrl;
-  // counters for click and views
-  this.clickCount = 0;
-  this.viewCount = 0;
-}
+    // get products from local storage
+    var localStorageProductData = localStorage.getItem('productData');
+    var parsedProductData = JSON.parse(localStorageProductData);
 
-// list of all products
-Product.productList = [];
-// list for removing VIEWED products within 2 rounds of voting
-Product.workingProductList = [];
-// list for last three items display
-Product.lastThreeProductsDisplayedList = [];
-// amount of total votes cast by user
-Product.totalVoteCount = 0;
-// maximum allowed votes
-Product.maxVoteCount = 25;
+    // populate array with products from storage
+    for (var productIdx = 0; productIdx < parsedProductData.length; productIdx++) {
+      Product.addProduct(new Product(parsedProductData[productIdx].name, parsedProductData[productIdx].imgUrl, parsedProductData[productIdx].clickCount, parsedProductData[productIdx].viewCount));
+    }
 
-// html elements
-//
-// img elements
-Product.leftImage = document.getElementById('leftProduct');
-Product.centerImage = document.getElementById('centerProduct');
-Product.rightImage = document.getElementById('rightProduct');
-// h3 elements
-Product.leftImageH3Element = document.getElementById('leftProductH3tag');
-Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
-Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
-// sidebar section element
-Product.sideBarProductCount = document.getElementById('leftSideBar');
-// canvas element
-Product.canvasElement = document.getElementById('canvas');
+    // set initial images on page load
+    Product.setRandomImages();
 
-// add event listeners to img elements
-Product.leftImage.addEventListener('click', clickHandler);
-Product.centerImage.addEventListener('click', clickHandler);
-Product.rightImage.addEventListener('click', clickHandler);
+  } else {
+    // create and add products
+    Product.addProduct(new Product('bag', 'img/bag.jpg'));
+    Product.addProduct(new Product('banana', 'img/banana.jpg'));
+    Product.addProduct(new Product('bathroom', 'img/bathroom.jpg'));
+    Product.addProduct(new Product('boots', 'img/boots.jpg'));
+    Product.addProduct(new Product('breakfast', 'img/breakfast.jpg'));
+    Product.addProduct(new Product('bubblegum', 'img/bubblegum.jpg'));
+    Product.addProduct(new Product('chair', 'img/chair.jpg'));
+    Product.addProduct(new Product('cthulhu', 'img/cthulhu.jpg'));
+    Product.addProduct(new Product('dog-duck', 'img/dog-duck.jpg'));
+    Product.addProduct(new Product('dragon', 'img/dragon.jpg'));
+    Product.addProduct(new Product('pen', 'img/pen.jpg'));
+    Product.addProduct(new Product('pet-sweep', 'img/pet-sweep.jpg'));
+    Product.addProduct(new Product('scissors', 'img/scissors.jpg'));
+    Product.addProduct(new Product('shark', 'img/shark.jpg'));
+    Product.addProduct(new Product('sweep', 'img/sweep.png'));
+    Product.addProduct(new Product('tauntaun', 'img/tauntaun.jpg'));
+    Product.addProduct(new Product('unicorn', 'img/unicorn.jpg'));
+    Product.addProduct(new Product('usb', 'img/usb.gif'));
+    Product.addProduct(new Product('water-can', 'img/water-can.jpg'));
+    Product.addProduct(new Product('wine-glass', 'img/wine-glass.jpg'));
 
-
-// function adds a product to list
-Product.addProduct = function (product) {
-  Product.productList.push(product);
-};
-
-// function returns a random product from the ProductManager's productlist=
-Product.getRandomProduct = function () {
-
-  // working product list gets copy of all products
-  // if working product list is zero or if product list is less than 4
-  // shuffles this array for voting uses
-  if (Product.workingProductList.length === 0 || Product.workingProductList.length < 4) {
-    Product.workingProductList = Product.productList.slice();
-    shuffleArray(Product.workingProductList);
+    // set initial images on page load
+    Product.setRandomImages();
   }
 
-  // get last product from shuffled array
-  var randomProduct = Product.workingProductList.pop();
 
-  // if current randomProduct matches a product from lastThreeProductDisplay array, get next product
-  while (Product.lastThreeProductsDisplayedList.includes(randomProduct)) {
-    randomProduct = Product.workingProductList.pop();
-  }
-
-  return randomProduct;
-};
-
-// function gets random products for left,center,right img and h3 elements
-Product.setRandomImages = function () {
-
-  // gets three distinct products
-  var randomLeftProduct = Product.getRandomProduct();
-  var randomCenterProduct = Product.getRandomProduct();
-  var randomRightProduct = Product.getRandomProduct();
-  // populate array with currently selected products
-  Product.lastThreeProductsDisplayedList = [randomLeftProduct, randomCenterProduct, randomRightProduct];
-
-  // set left product img url and alt text
-  Product.leftImage.src = randomLeftProduct.imgUrl;
-  Product.leftImage.alt = randomLeftProduct.name;
-  Product.leftImageH3Element.textContent = Product.leftImage.alt;
-  // set center product img url and alt text
-  Product.centerImage.src = randomCenterProduct.imgUrl;
-  Product.centerImage.alt = randomCenterProduct.name;
-  Product.centerImageH3Element.textContent = Product.centerImage.alt;
-  // set right product img url and alt text
-  Product.rightImage.src = randomRightProduct.imgUrl;
-  Product.rightImage.alt = randomRightProduct.name;
-  Product.rightImageH3Element.textContent = Product.rightImage.alt;
-
-  // increase view count for selected products
-  randomLeftProduct.viewCount++;
-  randomRightProduct.viewCount++;
-  randomCenterProduct.viewCount++;
-};
+}
 
 // function gets user's clicked image and increases that product's vote count
 function clickHandler(event) {
@@ -139,11 +66,16 @@ function clickHandler(event) {
   // increase total vote count
   Product.totalVoteCount++;
 
-  // remove listeners after user reaches maximum vote and display vote data
+  // if user reaches max vote -- remove listeners, save to local storage, and draw canvas
+  // else -- keep showing images
   if (Product.totalVoteCount === Product.maxVoteCount) {
     Product.leftImage.removeEventListener('click', clickHandler);
     Product.centerImage.removeEventListener('click', clickHandler);
     Product.rightImage.removeEventListener('click', clickHandler);
+
+    var ProductJSON = JSON.stringify(Product.productList);
+    localStorage.setItem('productData', ProductJSON);
+
     renderVoterDataOnCanvas();
   } else {
     Product.setRandomImages();
@@ -163,25 +95,31 @@ function shuffleArray(arr) {
   }
 }
 
+// function displays vote data to page
 function renderVoterDataOnCanvas() {
 
-  // aux arrays for pulling out Product object state
+
+  // auxiliary arrays for getting individual product data
+  
   var productNameArray = [];
   var productLikesArray = [];
   var productViewsArray = [];
 
-  // for product name label
+
+  // product name data
   for (var i = 0; i < Product.productList.length; i++) {
     productNameArray.push(Product.productList[i].name);
   }
 
-  // for product vote data
-  for (i = 0; i < Product.productList.length; i++) {
+
+  // product vote data
+  for (var i = 0; i < Product.productList.length; i++) {
     productLikesArray.push(Product.productList[i].clickCount);
   }
 
-  // for product view data
-  for (i = 0; i < Product.productList.length; i++) {
+  // product view data
+  for (var i = 0; i < Product.productList.length; i++) {
+
     productViewsArray.push(Product.productList[i].viewCount);
   }
 
@@ -205,6 +143,106 @@ function renderVoterDataOnCanvas() {
     }
   });
 }
+
+
+//////////////////////////////////////////////
+//  OBJECT SECTION
+//////////////////////////////////////////////
+
+// Product represents an item in store
+function Product(name, imgUrl, clickCount = 0, viewCount = 0) {
+  // instance variables
+  this.name = name;
+  this.imgUrl = imgUrl;
+  // counters for click and views
+  this.clickCount = clickCount;
+  this.viewCount = viewCount;
+}
+
+// list of all products
+Product.productList = [];
+// list for tracking VIEWED products within 2 rounds of voting
+Product.workingProductList = [];
+// list for last three items displayed
+Product.lastThreeProductsDisplayedList = [];
+// amount of total votes cast by user
+Product.totalVoteCount = 0;
+// maximum allowed votes
+Product.maxVoteCount = 25;
+
+// html elements
+//
+// img elements
+Product.leftImage = document.getElementById('leftProduct');
+Product.centerImage = document.getElementById('centerProduct');
+Product.rightImage = document.getElementById('rightProduct');
+// h3 elements
+Product.leftImageH3Element = document.getElementById('leftProductH3tag');
+Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
+Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
+// canvas element
+Product.canvasElement = document.getElementById('canvas');
+
+// add event listeners to img elements
+Product.leftImage.addEventListener('click', clickHandler);
+Product.centerImage.addEventListener('click', clickHandler);
+Product.rightImage.addEventListener('click', clickHandler);
+
+
+// function adds a product to list
+Product.addProduct = function (product) {
+  Product.productList.push(product);
+};
+
+// function returns a random product from the ProductManager's productlist=
+Product.getRandomProduct = function () {
+
+  // working product list gets copies all products if working product list is zero or if product list is less than 4.  Then shuffles array elements in random order.
+  if (Product.workingProductList.length === 0 || Product.workingProductList.length < 4) {
+    Product.workingProductList = Product.productList.slice();
+    shuffleArray(Product.workingProductList);
+  }
+
+  // get last product from shuffled array
+  var randomProduct = Product.workingProductList.pop();
+
+  // if current randomProduct matches a product from lastThreeProductDisplay array, get next product
+  while (Product.lastThreeProductsDisplayedList.includes(randomProduct)) {
+    randomProduct = Product.workingProductList.pop();
+  }
+
+  return randomProduct;
+};
+
+// function gets random products for left,center,right img and h3 elements
+Product.setRandomImages = function () {
+
+  // gets three distinct products
+  var randomLeftProduct = Product.getRandomProduct();
+  var randomCenterProduct = Product.getRandomProduct();
+  var randomRightProduct = Product.getRandomProduct();
+  
+  // populate array with currently selected products
+  Product.lastThreeProductsDisplayedList = [randomLeftProduct, randomCenterProduct, randomRightProduct];
+
+  // set left product img url and alt text
+  Product.leftImage.src = randomLeftProduct.imgUrl;
+  Product.leftImage.alt = randomLeftProduct.name;
+  Product.leftImageH3Element.textContent = Product.leftImage.alt;
+  // set center product img url and alt text
+  Product.centerImage.src = randomCenterProduct.imgUrl;
+  Product.centerImage.alt = randomCenterProduct.name;
+  Product.centerImageH3Element.textContent = Product.centerImage.alt;
+  // set right product img url and alt text
+  Product.rightImage.src = randomRightProduct.imgUrl;
+  Product.rightImage.alt = randomRightProduct.name;
+  Product.rightImageH3Element.textContent = Product.rightImage.alt;
+
+  // increase view count for selected products
+  randomLeftProduct.viewCount++;
+  randomRightProduct.viewCount++;
+  randomCenterProduct.viewCount++;
+};
 
 
 // call main

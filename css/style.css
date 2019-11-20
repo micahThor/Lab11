@@ -28,10 +28,5 @@ header {
 }
 
 #productImages h3 {
-  display: inline;
-}
-
-#canvas {
-  height: 200px;
-  width: 200px;
-}
+  display: inline-block;
+} 
