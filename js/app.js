@@ -177,9 +177,9 @@ Product.leftImage = document.getElementById('leftProduct');
 Product.centerImage = document.getElementById('centerProduct');
 Product.rightImage = document.getElementById('rightProduct');
 // h3 elements
-Product.leftImageH3Element = document.getElementById('leftProductH3tag');
-Product.centerImageH3Element = document.getElementById('centerProducth3Tag');
-Product.rightImageH3Element = document.getElementById('rightProducth3Tag');
+Product.leftImageSpanElement = document.getElementById('leftProductSpantag');
+Product.centerImageSpanElement = document.getElementById('centerProductSpantag');
+Product.rightImageSpanElement = document.getElementById('rightProductSpantag');
 // canvas element
 Product.canvasElement = document.getElementById('canvas');
 
@@ -228,15 +228,15 @@ Product.setRandomImages = function () {
   // set left product img url and alt text
   Product.leftImage.src = randomLeftProduct.imgUrl;
   Product.leftImage.alt = randomLeftProduct.name;
-  Product.leftImageH3Element.textContent = Product.leftImage.alt;
+  Product.leftImageSpanElement.textContent = Product.leftImage.alt;
   // set center product img url and alt text
   Product.centerImage.src = randomCenterProduct.imgUrl;
   Product.centerImage.alt = randomCenterProduct.name;
-  Product.centerImageH3Element.textContent = Product.centerImage.alt;
+  Product.centerImageSpanElement.textContent = Product.centerImage.alt;
   // set right product img url and alt text
   Product.rightImage.src = randomRightProduct.imgUrl;
   Product.rightImage.alt = randomRightProduct.name;
-  Product.rightImageH3Element.textContent = Product.rightImage.alt;
+  Product.rightImageSpanElement.textContent = Product.rightImage.alt;
 
   // increase view count for selected products
   randomLeftProduct.viewCount++;
