@@ -3,7 +3,6 @@
 }
 
 body {
-  margin: 0 auto;
   background-color: aliceblue;
 }
 
@@ -41,6 +40,6 @@ div.product img {
 }
 
 div.product span {
-  font-family: 'Archivo Narrow', sans-serif;
+  font-family: 'Julius Sans One';
   font-size: 30px;
 }
