@@ -7,7 +7,7 @@
 // function starts program
 function main() {
 
-  // check local storage for product data
+  // check local storage for existing product data
   if (localStorage.getItem('productData') !== null) {
 
     // get products from local storage
@@ -15,8 +15,8 @@ function main() {
     var parsedProductData = JSON.parse(localStorageProductData);
 
     // populate array with products from storage
-    for (var productIdx = 0; productIdx < parsedProductData.length; productIdx++) {
-      Product.addProduct(new Product(parsedProductData[productIdx].name, parsedProductData[productIdx].imgUrl, parsedProductData[productIdx].clickCount, parsedProductData[productIdx].viewCount));
+    for (var i = 0; i < parsedProductData.length; i++) {
+      Product.addProduct(new Product(parsedProductData[i].name, parsedProductData[i].imgUrl, parsedProductData[i].clickCount, parsedProductData[i].viewCount));
     }
 
     // set initial images on page load
@@ -48,11 +48,10 @@ function main() {
     // set initial images on page load
     Product.setRandomImages();
   }
-
-
 }
 
 // function gets user's clicked image and increases that product's vote count
+// function continues voting sessions until 25 votes have been reached
 function clickHandler(event) {
 
   // get alt text for selected image and find match of text in product list
@@ -67,7 +66,7 @@ function clickHandler(event) {
   Product.totalVoteCount++;
 
   // if user reaches max vote -- remove listeners, save to local storage, and draw canvas
-  // else -- keep showing images
+  // else -- keep displaying images for voting
   if (Product.totalVoteCount === Product.maxVoteCount) {
     Product.leftImage.removeEventListener('click', clickHandler);
     Product.centerImage.removeEventListener('click', clickHandler);
@@ -95,22 +94,18 @@ function shuffleArray(arr) {
   }
 }
 
-// function displays vote data to page
+// function displays vote data bar graph to page
 function renderVoterDataOnCanvas() {
 
-
   // auxiliary arrays for getting individual product data
-  
   var productNameArray = [];
   var productLikesArray = [];
   var productViewsArray = [];
-
 
   // product name data
   for (var i = 0; i < Product.productList.length; i++) {
     productNameArray.push(Product.productList[i].name);
   }
-
 
   // product vote data
   for (var i = 0; i < Product.productList.length; i++) {
@@ -119,7 +114,6 @@ function renderVoterDataOnCanvas() {
 
   // product view data
   for (var i = 0; i < Product.productList.length; i++) {
-
     productViewsArray.push(Product.productList[i].viewCount);
   }
 
@@ -131,12 +125,11 @@ function renderVoterDataOnCanvas() {
     data: {
       labels: productNameArray,
       datasets: [{
-        label: 'Vote Count',
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
+        label: 'Votes',
+        backgroundColor: 'red',
         data: productLikesArray
       }, {
-        label: 'View Count',
+        label: 'Views',
         backgroundColor: 'blue',
         data: productViewsArray
       }]
@@ -159,6 +152,8 @@ function Product(name, imgUrl, clickCount = 0, viewCount = 0) {
   this.viewCount = viewCount;
 }
 
+//  product object variables
+//
 // list of all products
 Product.productList = [];
 // list for tracking VIEWED products within 2 rounds of voting
@@ -170,7 +165,7 @@ Product.totalVoteCount = 0;
 // maximum allowed votes
 Product.maxVoteCount = 25;
 
-// html elements
+// html element variables
 //
 // img elements
 Product.leftImage = document.getElementById('leftProduct');
@@ -194,10 +189,10 @@ Product.addProduct = function (product) {
   Product.productList.push(product);
 };
 
-// function returns a random product from the ProductManager's productlist=
+// function returns a random product from the ProductManager's productlist
 Product.getRandomProduct = function () {
 
-  // working product list gets copies all products if working product list is zero or if product list is less than 4.  Then shuffles array elements in random order.
+  // working product list gets copies of all products if working product list is zero or if product list is less than 4.  Then shuffles array elements in random order.
   if (Product.workingProductList.length === 0 || Product.workingProductList.length < 4) {
     Product.workingProductList = Product.productList.slice();
     shuffleArray(Product.workingProductList);
@@ -214,26 +209,28 @@ Product.getRandomProduct = function () {
   return randomProduct;
 };
 
-// function gets random products for left,center,right img and h3 elements
+// function gets random products for left,center,right img and span elements
 Product.setRandomImages = function () {
 
   // gets three distinct products
   var randomLeftProduct = Product.getRandomProduct();
   var randomCenterProduct = Product.getRandomProduct();
   var randomRightProduct = Product.getRandomProduct();
-  
+
   // populate array with currently selected products
   Product.lastThreeProductsDisplayedList = [randomLeftProduct, randomCenterProduct, randomRightProduct];
 
-  // set left product img url and alt text
+  // set product img url, alt text, and span elements
+  //
+  // left
   Product.leftImage.src = randomLeftProduct.imgUrl;
   Product.leftImage.alt = randomLeftProduct.name;
   Product.leftImageSpanElement.textContent = Product.leftImage.alt;
-  // set center product img url and alt text
+  // center
   Product.centerImage.src = randomCenterProduct.imgUrl;
   Product.centerImage.alt = randomCenterProduct.name;
   Product.centerImageSpanElement.textContent = Product.centerImage.alt;
-  // set right product img url and alt text
+  // right
   Product.rightImage.src = randomRightProduct.imgUrl;
   Product.rightImage.alt = randomRightProduct.name;
   Product.rightImageSpanElement.textContent = Product.rightImage.alt;
